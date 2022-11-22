@@ -6,9 +6,9 @@ name: CI
 on:
   # Запускает рабочий процесс при событиях запроса push или pull, но только для ветви 
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
   # Позволяет запускать этот рабочий процесс вручную на вкладке действия
   #workflow_dispatch:
