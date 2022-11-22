@@ -1,36 +1,35 @@
-# Это базовый рабочий процесс, который поможет вам приступить к действиям
+# файл установки flake8 и проверки кода
+name: Django-app workflow
 
-name: CI
+on: [push]
 
-# Определяет, когда рабочий процесс будет запущен
-on:
-  # Запускает рабочий процесс при событиях запроса push или pull, но только для ветви 
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-  # Позволяет запускать этот рабочий процесс вручную на вкладке действия
-  #workflow_dispatch:
-
-# Выполнение рабочего процесса состоит из одного или нескольких заданий, которые могут выполняться последовательно или параллельно
 jobs:
-  # Этот рабочий процесс содержит одно задание под названием "сборка"
-  build:
-    # Тип запуска, на котором будет выполняться задание
+  tests:
+    # «Раннер» — создание изолированного окружения с последней версией Ubuntu 
     runs-on: ubuntu-latest
 
-    # Шаги представляют собой последовательность задач, которые будут выполняться как часть задания
     steps:
-      # Проверяет ваш репозиторий в $GITHUB_WORKSPACE, чтобы ваша работа могла получить к нему доступ
-      - uses: actions/checkout@v3
+    # Запуск actions checkout — готового скрипта 
+    # для клонирования репозитория
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      # Запуск actions setup-python — готового скрипта 
+      # для развёртывания окружения Python
+      uses: actions/setup-python@v2
+      with:
+        # Выбор версии Python
+        python-version: 3.7
 
-      # Запускает набор команд с помощью командной строки runners
-      - name: Run a one-line script
-        run: echo Hello, world!
+    - name: Install dependencies
+      run: | 
+        # обновление pip
+        python -m pip install --upgrade pip 
+        # установка flake8 и его плагинов
+        pip install flake8 pep8-naming flake8-broken-line flake8-return flake8-isort
+        # установка зависимостей
+        pip install -r requirements.txt 
 
-      # Запускает набор команд с помощью командной строки runners
-      - name: Run a multi-line script
-        run: |
-          echo Add other actions to build,
-          echo test, and deploy your project.
+    - name: Test with flake8 and django tests
+      run: |
+        # запуск проверки проекта по flake8
+        python -m flake8
